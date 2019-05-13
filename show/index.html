@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="format-detection" content="tephone=no,email=no,date=no,address=no">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <title>eve.js使用指南</title>
+    <script src='eve.js'></script>
+    <style>
+        *{box-sizing:border-box;  margin:0;  }
+        body{padding:5px;  }
+
+        img{display:block;  margin:0.5em;  }
+
+        button{padding:1em;  display:block;  margin:0.5em;  }
+        button[click]:after{content:': 'attr(click);  }
+        
+        a{display:inline-block;  text-decoration:none;  }
+        
+        p{margin:0.5em;  padding:0.5em;  background:#efefef;  color:#999;  }
+        
+        div{margin:0.5em;  position:relative;  overflow:hidden;  }
+        textarea{margin-top:2em;  display:block;  width:100%;  border:none;  white-space:nowrap;  padding:0.5em;  background:#eee;  color:#666;  overflow:auto;  min-height:10em;  font-family:'Courier New';  }
+        textarea+span:before{content:'js未编辑';  display:block;  color:#090;  position:absolute;  top:0;  left:0;  background:#EEEEEE;  font:14px/32px '';  display:block;  width:100%;  padding-left:0.5em;  }
+        
+        textarea:focus{background:#272822;  color:#ccc;  }
+        textarea:focus+span:before{color:#E6DB74;  background:#272822;  }
+
+        textarea[css-edit='true']+span:before{content:'js编辑状态(点击这里或按ctrl+s运行代码)';  display:block;  color:#f60;  }
+
+
+    </style>
+</head>
+
+<body>
+
+
+
+    <h3>设置事件</h3>
+    <img src='alert.png'>
+
+    <button click=alert()>点击按钮执行</button>
+    <script>
+        eve.alert=function (){
+            alert(this.tagName);
+        };
+    </script>
+    
+    <div>
+<textarea css-edit='false' keydown='saveScript()' input='editScript()' contenteditable='true'>
+    eve.alert=function (){
+        alert(this.tagName);
+    };
+</textarea>
+        <span click='runScript()'></span>
+    </div>
+    <p>：你可以用审查元素修改attr属性来修改绑定的事件，js代码可以直接编辑</p>
+
+
+
+
+
+    <br>
+    <br>
+    <br>
+    <h3>设置多个事件</h3>
+    <img src='alertHtml.png'>
+
+    <button click='alert();;alertHtml()'>点击按钮执行</button>
+    <script>
+        eve.alertHtml=function (){
+            alert(this.innerHTML);
+        };
+    </script>
+
+    <div>
+<textarea css-edit='false' keydown='saveScript()' input='editScript()' contenteditable='true'>
+    eve.alertHtml=function (){
+        alert(this.innerHTML);
+    };
+</textarea>
+        <span click='runScript()'></span>
+    </div>
+    <p>：多个事件用分号隔开(;)</p>
+
+
+
+
+
+
+
+
+    <br>
+    <br>
+    <br>
+    <h3>设置事件（分组）</h3>
+    <img src='alertlog.png'>
+
+    <button click='alert.log()'>点击按钮执行</button>
+    <script>
+        eve.alert.log=function (){
+            alert(this.tagName);
+            console.log(this);
+        };
+    </script>
+
+    <div>
+<textarea css-edit='false' keydown='saveScript()' input='editScript()' contenteditable='true'>
+    eve.alert.log=function (){
+        alert(this.tagName);
+        console.log(this.tagName);
+    };
+</textarea>
+        <span click='runScript()'></span>
+    </div>
+    <p>：如果有很多很多事件的话，可以把一些事件使用obj进行分组</p>
+
+
+
+
+
+
+
+
+    <br>
+    <br>
+    <br>
+    <h3>传参数</h3>
+    <img src='alertInput123456.png'>
+
+    <button click='alertInput(123456)'>点击按钮执行</button>
+    <script>
+        eve.alertInput=function (e,value){
+            alert(value);
+            console.log(e);
+        };
+    </script>
+    
+    <div>
+<textarea css-edit='false' keydown='saveScript()' input='editScript()' contenteditable='true'>
+    eve.alertInput=function (e,value){
+        alert(value);
+        console.log(e);
+    };
+</textarea>
+        <span click='runScript()'></span>
+    </div>
+    <p>：在html里传入的第一个参数，会变成js事件里面第二个参数，js里面第一个参数永远是event对象，简写为e</p>
+
+
+
+
+
+
+
+
+
+
+    <br>
+    <br>
+    <br>
+    <h3>阻止冒泡</h3>
+    <img src='stop.png'>
+
+    <div click='alert();;alertInput("直接点击div，没有被阻止冒泡，所以执行了div的alert")'>
+        <button click='stop();;alertInput("因为运行了stop，所以事件不会冒泡到div，就不会执行div的alert")'>点击按钮执行</button>
+    </div>
+
+    <p>：stop()是默认方法，总共有4个默认方法stop(),stopTrue(),def(),url(url,target)</p>
+
+
+
+
+
+    <br>
+    <br>
+    <br>
+    <h3>阻止冒泡（二）</h3>
+    <img src='stopt.png'>
+
+    <div click='alert()'>
+        <button click='stop=true();;alertInput("设置e.stop=true也可以阻止冒泡，stop和其他默认方法内部也是这样")'>点击按钮执行</button>
+    </div>
+    <script>
+        eve['stop=true']=function (e){
+            e.stop=true;
+        };
+    </script>
+
+    <div>
+<textarea css-edit='false' keydown='saveScript()' input='editScript()' contenteditable='true'>
+    eve['stop=true']=function (e){
+        e.stop=true;
+    };
+</textarea>
+        <span click='runScript()'></span>
+    </div>
+
+
+
+
+
+
+
+
+    <br>
+    <br>
+    <br>
+    <h3>阻止冒泡并且阻止后续事件运行</h3>
+    <img src='stopTrue.png'>
+
+    <div click='alert()'>
+        <button click='stop(true);;alertInput("点击没反应")'>点击按钮执行</button>
+    </div>
+
+
+
+
+
+
+
+
+
+    <br>
+    <br>
+    <br>
+    <h3>阻止默认行为</h3>
+    <img src='def.png'>
+
+    <a href='http://www.baidu.com' target='_blink'><button>打开百度</button></a>
+    <a href='http://www.baidu.com' target='_blink'><button click='def()'>打不开百度，因为</button></a>
+
+
+
+
+
+    <br>
+    <br>
+    <br>
+    <h3>打开一个url</h3>
+    <img src='url.png'>
+
+    <button click='url("http://www.baidu.com","_blink")'>打开百度</button>
+
+
+
+
+    <br>
+    <br>
+    <br>
+    <h3>其他事件</h3>
+    <img src='focusblur.png'>
+
+    <input focus='color("#f00")' blur='color("#00f")' mouseover='background("#ccc")' mouseout='background("#fff")'>
+    <script>
+
+        bindEvent('mouseover');
+        bindEvent('mouseout');
+
+        eve.color=function (e,color){
+            this.style.color=color;
+        };
+        eve.background=function (e,color){
+            this.style.background=color;
+        };
+    </script>
+    
+    
+<textarea css-edit='false' keydown='saveScript()' input='editScript()' contenteditable='true'>
+    bindEvent('mouseover');
+    bindEvent('mouseout');
+
+    eve.color=function (e,color){
+        this.style.color=color;
+    };
+    eve.background=function (e,color){
+        this.style.background=color;
+    };
+</textarea>
+    <p>默认自动绑定了'click','focus','change','blur','input','submit','keydown'事件，其他事件需要使用bindEvent手动绑定</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <!-- 本页面的一些默认行为 -->
+    <script>
+
+        // 按ctrl+s运行代码
+        eve.saveScript=function (e){
+            
+            if(e.ctrlKey && e.keyCode==83){
+
+                e.def=true;
+                
+                this.blur();
+                if(this.getAttribute('css-edit')=='true'){
+                    try{
+                        eval(this.value);
+                    }
+                    catch(error){
+                        alert(error);
+                        console.error(error);
+
+                        this.focus();
+                        this.setAttribute('css-edit','true');
+                        return;
+                    }
+                }
+                this.setAttribute('css-edit','false');
+            }
+        };
+        
+
+        // 进入编辑模式
+        eve.editScript=function (){
+            this.setAttribute('css-edit','true');
+        };
+        
+        // 点击按钮模拟ctrl+s
+        eve.runScript=function (e){
+            eve.saveScript.call(this.previousElementSibling,{ctrlKey:true,keyCode:83});
+        };
+    </script>
+</body>
+</html>
